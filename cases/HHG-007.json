@@ -1,0 +1,128 @@
+{
+  "case_id": "HHG-007",
+  "opened_at": "2016-12-05 03:46:14",
+  "trigger_type": "risk_score",
+  "flagged_txn_id": "3514948",
+  "customer_id": "C09933",
+  "card_id": "C09933-K2",
+  "verdict": "cleared",
+  "confidence": 0.9,
+  "pattern": "none",
+  "pattern_description": "",
+  "affected_txn_ids": [],
+  "first_suspicious_txn_id": "",
+  "exposure_usd": 111.92,
+  "approval_route": "L1_analyst",
+  "next_best_action": "CLOSE_NO_FRAUD",
+  "recommended_actions": [],
+  "triggered_rules": [
+    "R1",
+    "R7",
+    "R8"
+  ],
+  "sar_required": false,
+  "sar_narrative": "",
+  "evidence": [
+    {
+      "claim": "Transaction matches cardholder historical spending baseline, trusted devices, and regional parameters",
+      "source": "graph",
+      "ref": "query:get_customer_profile",
+      "entity_ids": [
+        "3514948"
+      ]
+    }
+  ],
+  "playbook": {
+    "case_id": "HHG-007",
+    "verdict": "cleared",
+    "pattern": "none",
+    "primary_action": "CLOSE_NO_FRAUD",
+    "approval_route": "auto",
+    "sla_hours": 1,
+    "containment_steps": [
+      "Release all security holds on account and card",
+      "Ensure uninterrupted cardholder purchasing capability"
+    ],
+    "customer_communication": {
+      "channel": "Email",
+      "message_copy": "Thank you for confirming your transaction. Your account is fully active and secure."
+    },
+    "financial_remediation": [
+      "Allow standard merchant settlement"
+    ],
+    "compliance_actions": [
+      "Close alert as legitimate cardholder activity",
+      "Update customer behavioral baseline in TigerGraph"
+    ],
+    "sign_off_checklist": [
+      "Confirm policy rule alignment (R1, R7, R8)",
+      "Verify financial exposure calculation ($111.92)",
+      "Validate customer notification dispatch",
+      "Confirm TigerGraph graph resolution payload"
+    ]
+  },
+  "trace_steps_count": 7,
+  "nba_before_additional_evidence": {
+    "status": "decision_at_initial_evidence",
+    "verdict": "cleared",
+    "confidence": 0.9,
+    "next_best_action": "CLOSE_NO_FRAUD",
+    "approval_route": "L1_analyst",
+    "evidence_count": 1,
+    "evidence_refs": [
+      "query:get_customer_profile"
+    ],
+    "recommended_actions": []
+  },
+  "additional_evidence_request": {
+    "required": false,
+    "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+    "action_type": null,
+    "options": []
+  },
+  "after_additional_evidence": {
+    "status": "not_applicable",
+    "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+    "verdict": "cleared",
+    "confidence": 0.9,
+    "next_best_action": "CLOSE_NO_FRAUD",
+    "approval_route": "L1_analyst"
+  },
+  "evidence_progression": {
+    "before_additional_evidence": {
+      "status": "decision_at_initial_evidence",
+      "verdict": "cleared",
+      "confidence": 0.9,
+      "next_best_action": "CLOSE_NO_FRAUD",
+      "approval_route": "L1_analyst",
+      "evidence_count": 1,
+      "evidence_refs": [
+        "query:get_customer_profile"
+      ],
+      "recommended_actions": []
+    },
+    "additional_evidence_request": {
+      "required": false,
+      "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+      "action_type": null,
+      "options": []
+    },
+    "after_additional_evidence": {
+      "status": "not_applicable",
+      "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+      "verdict": "cleared",
+      "confidence": 0.9,
+      "next_best_action": "CLOSE_NO_FRAUD",
+      "approval_route": "L1_analyst"
+    }
+  },
+  "graph_writeback": {
+    "status": "ready_for_tigergraph_writeback",
+    "case_vertex": "HHG-007",
+    "customer_vertex": "C09933",
+    "card_vertex": "C09933-K2",
+    "transaction_vertices": [],
+    "gsql_artifact": "tigergraph/generated/benchmark_case_writeback.gsql",
+    "note": "This manifest describes the graph writeback payload. A live TigerGraph deployment must execute the generated GSQL; this file does not falsely claim a remote write occurred."
+  }
+}

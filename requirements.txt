@@ -1,0 +1,5 @@
+# TigerGraph Agentic Fraud Investigation Agent
+# Core agent, GraphRAG engine, and REST backend require Python 3.9+ Standard Library.
+# Optional integrations:
+pyTigerGraph>=1.5.0
+requests>=2.31.0

@@ -1,0 +1,198 @@
+{
+  "case_id": "HHG-001",
+  "opened_at": "2016-12-05 01:55:28",
+  "trigger_type": "risk_score",
+  "flagged_txn_id": "3514030",
+  "customer_id": "C12382",
+  "card_id": "C12382-K1",
+  "verdict": "uncertain",
+  "confidence": 0.75,
+  "pattern": "out_of_region_use",
+  "pattern_description": "",
+  "affected_txn_ids": [
+    "3514030"
+  ],
+  "first_suspicious_txn_id": "3514030",
+  "exposure_usd": 77.07,
+  "approval_route": "L1_analyst",
+  "next_best_action": "VERIFY_WITH_CUSTOMER",
+  "recommended_actions": [
+    "VERIFY_WITH_CUSTOMER"
+  ],
+  "triggered_rules": [
+    "R1",
+    "R2",
+    "R3",
+    "R7",
+    "R8"
+  ],
+  "sar_required": false,
+  "sar_narrative": "",
+  "evidence": [
+    {
+      "claim": "Card-present in-person transaction in non-dominant billing region 444.0 (14 lifetime txns) vs primary home region 204.0 (47 txns)",
+      "source": "graph",
+      "ref": "query:check_region_discrepancy",
+      "entity_ids": [
+        "3514030",
+        "444.0",
+        "204.0"
+      ]
+    }
+  ],
+  "playbook": {
+    "case_id": "HHG-001",
+    "verdict": "uncertain",
+    "pattern": "out_of_region_use",
+    "primary_action": "VERIFY_WITH_CUSTOMER",
+    "approval_route": "L1_analyst",
+    "sla_hours": 2,
+    "containment_steps": [
+      "Place temporary security authorization hold on transaction 3514030",
+      "Dispatch automated SMS two-way travel verification prompt"
+    ],
+    "customer_communication": {
+      "channel": "SMS / In-App Push",
+      "message_copy": "Did you attempt a purchase of $77.07 in billing region unknown? Reply YES if this was you, or NO if you did not make this purchase."
+    },
+    "financial_remediation": [
+      "Hold settlement pending cardholder response"
+    ],
+    "compliance_actions": [
+      "Track verification response within 2-hour SLA window",
+      "Escalate to fraud block if customer denies or times out"
+    ],
+    "sign_off_checklist": [
+      "Confirm policy rule alignment (R1, R2, R3, R7, R8)",
+      "Verify financial exposure calculation ($77.07)",
+      "Validate customer notification dispatch",
+      "Confirm TigerGraph graph resolution payload"
+    ]
+  },
+  "trace_steps_count": 7,
+  "nba_before_additional_evidence": {
+    "status": "decision_at_initial_evidence",
+    "verdict": "uncertain",
+    "confidence": 0.75,
+    "next_best_action": "VERIFY_WITH_CUSTOMER",
+    "approval_route": "L1_analyst",
+    "evidence_count": 1,
+    "evidence_refs": [
+      "query:check_region_discrepancy"
+    ],
+    "recommended_actions": [
+      "VERIFY_WITH_CUSTOMER"
+    ]
+  },
+  "additional_evidence_request": {
+    "required": true,
+    "action_type": "customer_contact",
+    "reason": "Customer validation of the out-of-region transaction.",
+    "approval_route": "L1_analyst",
+    "options": [
+      {
+        "outcome_code": "travel_confirmed",
+        "description": "Simulated customer confirmation of legitimate travel to the billing region.",
+        "resulting_verdict": "cleared",
+        "resulting_nba": "CLOSE_NO_FRAUD",
+        "resulting_approval_route": "L1_analyst"
+      },
+      {
+        "outcome_code": "fraud_confirmed",
+        "description": "Simulated customer denial of the transaction while retaining the card.",
+        "resulting_verdict": "confirmed_fraud",
+        "resulting_nba": "BLOCK_CARD",
+        "resulting_approval_route": "L1_analyst"
+      }
+    ]
+  },
+  "after_additional_evidence": {
+    "status": "conditional_simulation_branches",
+    "note": "The benchmark output does not claim that an external/customer response was actually received. These are the policy-approved simulated outcomes supported by the repository evidence simulator.",
+    "branches": [
+      {
+        "outcome_code": "travel_confirmed",
+        "description": "Simulated customer confirmation of legitimate travel to the billing region.",
+        "resulting_verdict": "cleared",
+        "resulting_nba": "CLOSE_NO_FRAUD",
+        "resulting_approval_route": "L1_analyst"
+      },
+      {
+        "outcome_code": "fraud_confirmed",
+        "description": "Simulated customer denial of the transaction while retaining the card.",
+        "resulting_verdict": "confirmed_fraud",
+        "resulting_nba": "BLOCK_CARD",
+        "resulting_approval_route": "L1_analyst"
+      }
+    ]
+  },
+  "evidence_progression": {
+    "before_additional_evidence": {
+      "status": "decision_at_initial_evidence",
+      "verdict": "uncertain",
+      "confidence": 0.75,
+      "next_best_action": "VERIFY_WITH_CUSTOMER",
+      "approval_route": "L1_analyst",
+      "evidence_count": 1,
+      "evidence_refs": [
+        "query:check_region_discrepancy"
+      ],
+      "recommended_actions": [
+        "VERIFY_WITH_CUSTOMER"
+      ]
+    },
+    "additional_evidence_request": {
+      "required": true,
+      "action_type": "customer_contact",
+      "reason": "Customer validation of the out-of-region transaction.",
+      "approval_route": "L1_analyst",
+      "options": [
+        {
+          "outcome_code": "travel_confirmed",
+          "description": "Simulated customer confirmation of legitimate travel to the billing region.",
+          "resulting_verdict": "cleared",
+          "resulting_nba": "CLOSE_NO_FRAUD",
+          "resulting_approval_route": "L1_analyst"
+        },
+        {
+          "outcome_code": "fraud_confirmed",
+          "description": "Simulated customer denial of the transaction while retaining the card.",
+          "resulting_verdict": "confirmed_fraud",
+          "resulting_nba": "BLOCK_CARD",
+          "resulting_approval_route": "L1_analyst"
+        }
+      ]
+    },
+    "after_additional_evidence": {
+      "status": "conditional_simulation_branches",
+      "note": "The benchmark output does not claim that an external/customer response was actually received. These are the policy-approved simulated outcomes supported by the repository evidence simulator.",
+      "branches": [
+        {
+          "outcome_code": "travel_confirmed",
+          "description": "Simulated customer confirmation of legitimate travel to the billing region.",
+          "resulting_verdict": "cleared",
+          "resulting_nba": "CLOSE_NO_FRAUD",
+          "resulting_approval_route": "L1_analyst"
+        },
+        {
+          "outcome_code": "fraud_confirmed",
+          "description": "Simulated customer denial of the transaction while retaining the card.",
+          "resulting_verdict": "confirmed_fraud",
+          "resulting_nba": "BLOCK_CARD",
+          "resulting_approval_route": "L1_analyst"
+        }
+      ]
+    }
+  },
+  "graph_writeback": {
+    "status": "ready_for_tigergraph_writeback",
+    "case_vertex": "HHG-001",
+    "customer_vertex": "C12382",
+    "card_vertex": "C12382-K1",
+    "transaction_vertices": [
+      "3514030"
+    ],
+    "gsql_artifact": "tigergraph/generated/benchmark_case_writeback.gsql",
+    "note": "This manifest describes the graph writeback payload. A live TigerGraph deployment must execute the generated GSQL; this file does not falsely claim a remote write occurred."
+  }
+}

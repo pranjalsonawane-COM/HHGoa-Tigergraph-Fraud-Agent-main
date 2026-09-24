@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hacker House Goa — TigerGraph Autonomous Fraud Agent</title>
+    <meta name="description" content="Official Hacker House Goa (2:47 PM Studio) TigerGraph Agentic Fraud Investigation System.">
+    
+    <!-- Modern Clean Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Rozha+One&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="hhgoa-theme">
+    <!-- TOP ACCENT STRIP -->
+    <div class="goa-top-strip"></div>
+
+    <!-- MAIN HEADER -->
+    <header class="app-header">
+        <div class="header-left">
+            <!-- 2:47 PM STUDIO -->
+            <div class="studio-badge">
+                <span class="studio-time">2:47<span class="studio-pm">PM</span></span>
+                <span class="studio-label">STUDIO</span>
+            </div>
+
+            <div class="header-v-divider"></div>
+
+            <!-- HACKER HOUSE GOA BRAND -->
+            <div class="hhgoa-brand">
+                <div class="brand-title">
+                    <span class="title-hacker">HACKER</span>
+                    <span class="goa-hindi-tag">गोवा</span>
+                    <span class="title-house">HOUSE</span>
+                </div>
+                <div class="brand-sub">GOA, INDIA • TIGERGRAPH AGENTIC OS</div>
+            </div>
+        </div>
+
+        <div class="header-right">
+            <div class="tg-live-pill">
+                <span class="pulse-dot"></span>
+                <span class="tg-text">TigerGraph Live CE</span>
+                <span class="tg-nodes">634K Entities</span>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" id="onDemandTxnInput" placeholder="Enter Txn ID (e.g. 3478561)...">
+                <button id="btnInvestigateTxn" class="btn-investigate">⚡ Investigate</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SUB-HEADER -->
+    <section class="hero-strip">
+        <div class="hero-tag">🌴 HACKER HOUSE GOA 2026 • FRAUD INVESTIGATION RESIDENCY</div>
+        <h1 class="hero-title">Autonomous <span class="highlight-yellow">GraphRAG</span> Fraud Shield</h1>
+        <p class="hero-desc">Multi-hop graph traversal, 5,565 closed-case memory, policy-governed containment playbooks, and automated FinCEN SAR filings.</p>
+    </section>
+
+    <!-- METRICS CARDS ROW -->
+    <section class="metrics-grid">
+        <div class="metric-box metric-yellow">
+            <div class="metric-top">
+                <span class="metric-number" id="statTotalCases">20</span>
+                <span class="metric-title">BENCHMARK CASES</span>
+            </div>
+            <div class="metric-sub">100% Autonomous Evaluation</div>
+        </div>
+
+        <div class="metric-box metric-pink">
+            <div class="metric-top">
+                <span class="metric-number" id="statConfirmedFraud">15</span>
+                <span class="metric-title">CONFIRMED FRAUD</span>
+            </div>
+            <div class="metric-sub">Defensive Card Blocks Enacted</div>
+        </div>
+
+        <div class="metric-box metric-yellow">
+            <div class="metric-top">
+                <span class="metric-number" id="statUncertainCases">4</span>
+                <span class="metric-title">UNCERTAIN CASES</span>
+            </div>
+            <div class="metric-sub">Simulated Step-Up Auth</div>
+        </div>
+
+        <div class="metric-box metric-pink">
+            <div class="metric-top">
+                <span class="metric-number" id="statSarFilings">14</span>
+                <span class="metric-title">FINCEN SAR FILINGS</span>
+            </div>
+            <div class="metric-sub">Level 2 Senior Escalations</div>
+        </div>
+
+        <div class="metric-box metric-gold">
+            <div class="metric-top">
+                <span class="metric-number" id="statTotalExposure">$3,623.21</span>
+                <span class="metric-title">MITIGATED EXPOSURE</span>
+            </div>
+            <div class="metric-sub">Across 634k Graph Entities</div>
+        </div>
+    </section>
+
+    <!-- MAIN TWO-COLUMN DASHBOARD -->
+    <main class="dashboard-layout">
+        <!-- LEFT: CASE EXPLORER -->
+        <aside class="panel case-explorer">
+            <div class="panel-header">
+                <div class="panel-heading">
+                    <span class="icon">🌴</span>
+                    <h3>Case Explorer</h3>
+                </div>
+                <div class="filter-pills">
+                    <button class="pill-btn active" data-filter="all">All</button>
+                    <button class="pill-btn btn-fraud" data-filter="confirmed_fraud">Fraud</button>
+                    <button class="pill-btn btn-uncertain" data-filter="uncertain">Uncertain</button>
+                    <button class="pill-btn btn-sar" data-filter="sar">SAR</button>
+                </div>
+            </div>
+            <div class="case-scroll-list" id="caseListContainer">
+                <div class="loading-state">Loading cases...</div>
+            </div>
+        </aside>
+
+        <!-- RIGHT: DOSSIER & GRAPH -->
+        <section class="panel dossier-view">
+            <!-- DOSSIER TOP BAR -->
+            <div class="dossier-bar">
+                <div class="dossier-id-group">
+                    <h2 id="dossierCaseId">Case HHG-014 Dossier</h2>
+                    <span id="dossierVerdictBadge" class="badge-tag badge-fraud">CONFIRMED_FRAUD</span>
+                    <span id="dossierApprovalBadge" class="badge-tag badge-l2">L2_SENIOR_MANAGER</span>
+                </div>
+                <div class="dossier-stats-group">
+                    <div class="stat-badge">
+                        <span class="label">EXPOSURE:</span>
+                        <span class="val" id="dossierAmount">$74.96</span>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="label">CONFIDENCE:</span>
+                        <span class="val" id="dossierConfidence">88%</span>
+                    </div>
+                    <div class="stat-badge">
+                        <span class="label">FINCEN SAR:</span>
+                        <span class="val" id="dossierSarStatus">YES (Mandatory)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOPOLOGY CANVAS -->
+            <div class="canvas-card">
+                <div class="canvas-meta-bar">
+                    <div class="canvas-label">
+                        <span class="sun-glow">☀️</span>
+                        <h4>TigerGraph Multi-Hop Neighborhood Subgraph</h4>
+                    </div>
+                    <div class="canvas-legend">
+                        <span class="legend-item"><span class="dot dot-txn"></span> Flagged Txn</span>
+                        <span class="legend-item"><span class="dot dot-card"></span> Card</span>
+                        <span class="legend-item"><span class="dot dot-cust"></span> Customer</span>
+                        <span class="legend-item"><span class="dot dot-dev"></span> Device</span>
+                        <span class="legend-item"><span class="dot dot-shared"></span> Syndicate Link</span>
+                    </div>
+                </div>
+                <div class="canvas-box">
+                    <canvas id="graphCanvas" height="300"></canvas>
+                </div>
+            </div>
+
+            <!-- DOSSIER TABS -->
+            <div class="tabs-header">
+                <button class="tab-item active" data-target="tabEvidence">Multi-Hop Evidence</button>
+                <button class="tab-item" data-target="tabTrace">ReAct Trace (8 Steps)</button>
+                <button class="tab-item" data-target="tabPlaybook">NBA Playbook</button>
+                <button class="tab-item" data-target="tabSar">FinCEN SAR Narrative</button>
+                <button class="tab-item" data-target="tabSimulation">Interactive Simulator</button>
+            </div>
+
+            <div class="tabs-body">
+                <!-- TAB 1: EVIDENCE -->
+                <div class="tab-content active" id="tabEvidence">
+                    <div class="evidence-container" id="evidenceBox"></div>
+                </div>
+
+                <!-- TAB 2: REACT TRACE -->
+                <div class="tab-content" id="tabTrace">
+                    <div class="trace-container" id="stepperContainer"></div>
+                </div>
+
+                <!-- TAB 3: PLAYBOOK -->
+                <div class="tab-content" id="tabPlaybook">
+                    <div class="playbook-wrapper" id="playbookContainer"></div>
+                </div>
+
+                <!-- TAB 4: SAR -->
+                <div class="tab-content" id="tabSar">
+                    <div class="sar-card-box">
+                        <div class="sar-action-row">
+                            <div class="sar-header-title">
+                                <span>🏛️</span>
+                                <h4>FinCEN Suspicious Activity Report (SAR) Narrative</h4>
+                            </div>
+                            <button class="btn-copy" id="btnCopySar">📋 Copy Narrative</button>
+                        </div>
+                        <pre class="sar-pre" id="sarNarrativeText"></pre>
+                    </div>
+                </div>
+
+                <!-- TAB 5: SIMULATION -->
+                <div class="tab-content" id="tabSimulation">
+                    <div class="sim-wrapper">
+                        <div class="sim-prompt-box">
+                            <h4>Dynamic Evidence & State Transition Simulator</h4>
+                            <p>Simulate customer travel or dispute signals to test real-time state machine transitions.</p>
+                        </div>
+                        <div class="sim-buttons">
+                            <button class="btn-sim sim-clear" id="btnSimTravel">
+                                ✈️ Simulate Cardholder Confirmed Travel (Clear Case)
+                            </button>
+                            <button class="btn-sim sim-dispute" id="btnSimFraud">
+                                🚨 Simulate Cardholder Denied Charge (Confirm Fraud)
+                            </button>
+                        </div>
+                        <div class="sim-output" id="simResultBox"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+        <div class="footer-brand">
+            <strong>2:47 PM STUDIO</strong> • HACKER HOUSE GOA • TIGERGRAPH FRAUD AGENT OS
+        </div>
+        <div class="footer-credit">
+            Powered by <strong>TigerGraph GraphRAG</strong> & Policy Engine v1.0
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

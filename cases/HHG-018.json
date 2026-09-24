@@ -1,0 +1,144 @@
+{
+  "case_id": "HHG-018",
+  "opened_at": "2016-11-27 14:41:26",
+  "trigger_type": "customer_report",
+  "flagged_txn_id": "3491361",
+  "customer_id": "C02354",
+  "card_id": "C02354-K2",
+  "verdict": "confirmed_fraud",
+  "confidence": 0.92,
+  "pattern": "out_of_region_use",
+  "pattern_description": "",
+  "affected_txn_ids": [
+    "3491361"
+  ],
+  "first_suspicious_txn_id": "3491361",
+  "exposure_usd": 39.08,
+  "approval_route": "L1_analyst",
+  "next_best_action": "BLOCK_CARD",
+  "recommended_actions": [
+    "VERIFY_WITH_CUSTOMER"
+  ],
+  "triggered_rules": [
+    "R2",
+    "R3",
+    "R7",
+    "R8"
+  ],
+  "sar_required": false,
+  "sar_narrative": "",
+  "evidence": [
+    {
+      "claim": "Card-present in-person transaction in non-dominant billing region 126.0 (685 lifetime txns) vs primary home region 325.0 (5774 txns)",
+      "source": "graph",
+      "ref": "query:check_region_discrepancy",
+      "entity_ids": [
+        "3491361",
+        "126.0",
+        "325.0"
+      ]
+    }
+  ],
+  "playbook": {
+    "case_id": "HHG-018",
+    "verdict": "confirmed_fraud",
+    "pattern": "out_of_region_use",
+    "primary_action": "BLOCK_CARD",
+    "approval_route": "L1_analyst",
+    "sla_hours": 4,
+    "containment_steps": [
+      "Hard block compromised card C02354-K2",
+      "De-authenticate suspicious online browser sessions",
+      "Order expedited replacement card"
+    ],
+    "customer_communication": {
+      "channel": "SMS / In-App Push",
+      "message_copy": "Dear Customer, we confirmed unauthorized charges of $39.08 on your card. We have blocked the card and initiated a full refund."
+    },
+    "financial_remediation": [
+      "Initiate card network chargebacks totaling $39.08",
+      "Credit customer account in full",
+      "Reissue new card credentials"
+    ],
+    "compliance_actions": [
+      "Record internal fraud resolution in audit log",
+      "Update cardholder risk profile in TigerGraph"
+    ],
+    "sign_off_checklist": [
+      "Confirm policy rule alignment (R2, R3, R7, R8)",
+      "Verify financial exposure calculation ($39.08)",
+      "Validate customer notification dispatch",
+      "Confirm TigerGraph graph resolution payload"
+    ]
+  },
+  "trace_steps_count": 7,
+  "nba_before_additional_evidence": {
+    "status": "decision_at_initial_evidence",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.92,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L1_analyst",
+    "evidence_count": 1,
+    "evidence_refs": [
+      "query:check_region_discrepancy"
+    ],
+    "recommended_actions": [
+      "VERIFY_WITH_CUSTOMER"
+    ]
+  },
+  "additional_evidence_request": {
+    "required": false,
+    "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+    "action_type": null,
+    "options": []
+  },
+  "after_additional_evidence": {
+    "status": "not_applicable",
+    "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.92,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L1_analyst"
+  },
+  "evidence_progression": {
+    "before_additional_evidence": {
+      "status": "decision_at_initial_evidence",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.92,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L1_analyst",
+      "evidence_count": 1,
+      "evidence_refs": [
+        "query:check_region_discrepancy"
+      ],
+      "recommended_actions": [
+        "VERIFY_WITH_CUSTOMER"
+      ]
+    },
+    "additional_evidence_request": {
+      "required": false,
+      "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+      "action_type": null,
+      "options": []
+    },
+    "after_additional_evidence": {
+      "status": "not_applicable",
+      "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.92,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L1_analyst"
+    }
+  },
+  "graph_writeback": {
+    "status": "ready_for_tigergraph_writeback",
+    "case_vertex": "HHG-018",
+    "customer_vertex": "C02354",
+    "card_vertex": "C02354-K2",
+    "transaction_vertices": [
+      "3491361"
+    ],
+    "gsql_artifact": "tigergraph/generated/benchmark_case_writeback.gsql",
+    "note": "This manifest describes the graph writeback payload. A live TigerGraph deployment must execute the generated GSQL; this file does not falsely claim a remote write occurred."
+  }
+}
