@@ -1,0 +1,161 @@
+// ============================================================================
+// TigerGraph Schema Definition for Agentic Fraud Investigation (HHGOA IEEE-CIS)
+// Graph Name: FraudGraph
+// ============================================================================
+
+CREATE GRAPH FraudGraph()
+
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// 1. VERTEX DEFINITIONS
+// ----------------------------------------------------------------------------
+
+// Customer Entity
+CREATE VERTEX Customer(
+    PRIMARY_ID customer_id STRING,
+    total_cards INT,
+    first_seen DATETIME,
+    home_region STRING,
+    total_txns INT
+) WITH STATS="OUTDEGREE"
+
+// Card Entity (<customer_id>-K<n>)
+CREATE VERTEX Card(
+    PRIMARY_ID card_id STRING,
+    customer_id STRING,
+    card_network STRING,
+    card_type STRING,
+    card1 STRING,
+    card2 STRING,
+    card3 STRING,
+    card4 STRING,
+    card5 STRING,
+    card6 STRING,
+    is_active BOOL DEFAULT true
+) WITH STATS="OUTDEGREE"
+
+// Transaction Event
+CREATE VERTEX Transaction(
+    PRIMARY_ID transaction_id STRING,
+    amount DOUBLE,
+    ts DATETIME,
+    channel STRING,
+    product_cd STRING,
+    risk_score DOUBLE,
+    addr1 STRING,
+    addr2 STRING,
+    p_email STRING,
+    r_email STRING,
+    device_id STRING,
+    id_15 STRING,
+    id_23 STRING,
+    is_flagged BOOL DEFAULT false
+) WITH STATS="OUTDEGREE"
+
+// Canonical Device & Client Profile
+CREATE VERTEX DeviceProfile(
+    PRIMARY_ID device_id STRING,
+    canonical_profile_str STRING,
+    device_info STRING,
+    os STRING,
+    browser STRING,
+    screen STRING,
+    device_type STRING
+) WITH STATS="OUTDEGREE"
+
+// Billing Region (Geographical area code from addr1)
+CREATE VERTEX BillingRegion(
+    PRIMARY_ID region_id STRING,
+    total_transactions INT
+) WITH STATS="OUTDEGREE"
+
+// Email Domain (from P_emaildomain / R_emaildomain)
+CREATE VERTEX EmailDomain(
+    PRIMARY_ID domain_name STRING,
+    total_transactions INT
+) WITH STATS="OUTDEGREE"
+
+// Case Memory (Closed Historical Investigations & Active Agent Cases)
+CREATE VERTEX ClosedCase(
+    PRIMARY_ID case_id STRING,
+    customer_id STRING,
+    card_id STRING,
+    opened_at DATETIME,
+    closed_at DATETIME,
+    outcome STRING,
+    pattern STRING,
+    exposure_usd DOUBLE,
+    report_filed BOOL,
+    actions_taken STRING,
+    analyst_notes STRING,
+    txn_ids STRING,
+    connected_card_ids STRING
+) WITH STATS="OUTDEGREE"
+
+
+// ----------------------------------------------------------------------------
+// 2. EDGE DEFINITIONS
+// ----------------------------------------------------------------------------
+
+// Customer owns Card
+CREATE DIRECTED EDGE OWNS(
+    FROM Customer,
+    TO Card
+) WITH REVERSE_EDGE="OWNED_BY"
+
+// Card made Transaction
+CREATE DIRECTED EDGE MADE(
+    FROM Card,
+    TO Transaction
+) WITH REVERSE_EDGE="MADE_BY"
+
+// Online Transaction was originated from DeviceProfile
+CREATE DIRECTED EDGE FROM_DEVICE(
+    FROM Transaction,
+    TO DeviceProfile,
+    id_15 STRING
+) WITH REVERSE_EDGE="DEVICE_FOR_TXN"
+
+// Transaction billed in BillingRegion
+CREATE DIRECTED EDGE BILLED_IN(
+    FROM Transaction,
+    TO BillingRegion
+) WITH REVERSE_EDGE="REGION_FOR_TXN"
+
+// Purchaser and Recipient Email associations
+CREATE DIRECTED EDGE PURCHASER_EMAIL(
+    FROM Transaction,
+    TO EmailDomain
+) WITH REVERSE_EDGE="PURCHASER_EMAIL_FOR_TXN"
+
+CREATE DIRECTED EDGE RECIPIENT_EMAIL(
+    FROM Transaction,
+    TO EmailDomain
+) WITH REVERSE_EDGE="RECIPIENT_EMAIL_FOR_TXN"
+
+// Chronological transaction sequence on a single card
+CREATE DIRECTED EDGE NEXT(
+    FROM Transaction,
+    TO Transaction,
+    delta_seconds INT
+) WITH REVERSE_EDGE="PREV"
+
+// Case involves fraudulent/investigated Transaction
+CREATE DIRECTED EDGE INVOLVES(
+    FROM ClosedCase,
+    TO Transaction,
+    is_first_fraud BOOL
+) WITH REVERSE_EDGE="INVOLVED_IN_CASE"
+
+// Case targeted on primary Card
+CREATE DIRECTED EDGE ON_CARD(
+    FROM ClosedCase,
+    TO Card
+) WITH REVERSE_EDGE="CASE_ON_CARD"
+
+// Case linked to connected Card in fraud ring
+CREATE DIRECTED EDGE CONNECTED_TO(
+    FROM ClosedCase,
+    TO Card
+) WITH REVERSE_EDGE="CONNECTED_TO_CASE"

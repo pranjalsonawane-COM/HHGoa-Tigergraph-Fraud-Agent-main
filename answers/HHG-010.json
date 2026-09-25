@@ -1,0 +1,161 @@
+{
+  "case_id": "HHG-010",
+  "opened_at": "2016-12-02 18:18:27",
+  "trigger_type": "risk_score",
+  "flagged_txn_id": "3506725",
+  "customer_id": "C10434",
+  "card_id": "C10434-K1",
+  "verdict": "confirmed_fraud",
+  "confidence": 0.88,
+  "pattern": "undocumented",
+  "pattern_description": "Multi-card syndicate operating through shared device profile (Windows | Windows 10 | edge 16.0 | 1366x768) across 208 distinct cards and 208 customers, operating behind an anonymous proxy and linked to 1130 prior closed fraud cases.",
+  "affected_txn_ids": [
+    "3506725"
+  ],
+  "first_suspicious_txn_id": "3506725",
+  "exposure_usd": 1000.03,
+  "approval_route": "L2_senior_manager",
+  "next_best_action": "BLOCK_CARD",
+  "recommended_actions": [
+    "CREATE_CASE",
+    "BLOCK_CARD",
+    "BLOCK_ALL_LINKED_CARDS",
+    "ESCALATE_TO_L2",
+    "FILE_SAR"
+  ],
+  "triggered_rules": [
+    "R1",
+    "R6",
+    "R7",
+    "R9",
+    "R8"
+  ],
+  "sar_required": true,
+  "sar_narrative": "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE\nCase Reference: HHG-010\nSubject Customer: C10434 | Subject Card: C10434-K1\nActivity Period: 2016-12-02 18:18:27 | Cumulative Exposure: $1000.03\nPrimary Typology: UNDOCUMENTED\n\n1. EXECUTIVE SUMMARY:\nFinancial institution automated graph surveillance identified organized anomalous activity involving customer C10434 and card C10434-K1, resulting in cumulative suspicious exposure of $1000.03 across transaction(s) 3506725.\n\n2. GRAPH & DEVICE TOPOLOGY ANALYSIS:\nGraph traversal revealed that transaction 3506725 originated from device profile 'Windows | Windows 10 | edge 16.0 | 1366x768' (Device ID: DEV_4c01eda17c29). Graph topological queries confirmed this exact device profile is shared across 208 distinct cardholder accounts and is connected to 1130 previously confirmed fraud case(s) (CC-0249, CC-2519, CC-2865, CC-1994). Activity exhibited proxy masking characteristics (Proxy status: ).\n\n3. POLICY COMPLIANCE & ACTIONS TAKEN:\nIn accordance with Fraud Policy v1.0 (Rules R6, R8, R9), the institution initiated immediate defensive card blocks, escalated the case to Senior Fraud Management (Level 2 Approval), and filed this formal FinCEN SAR.\n",
+  "evidence": [
+    {
+      "claim": "Device profile (Windows | Windows 10 | edge 16.0 | 1366x768) is shared across 208 cards and 208 distinct customers, linked to 1130 historical fraud cases (CC-0249, CC-2519, CC-2865)",
+      "source": "graph",
+      "ref": "query:check_device_sharing",
+      "entity_ids": [
+        "3506725",
+        "DEV_4c01eda17c29",
+        "CC-0249",
+        "CC-2519",
+        "CC-2865"
+      ]
+    }
+  ],
+  "playbook": {
+    "case_id": "HHG-010",
+    "verdict": "confirmed_fraud",
+    "pattern": "undocumented",
+    "primary_action": "BLOCK_ALL_LINKED_CARDS_AND_FILE_SAR",
+    "approval_route": "L2_senior_manager",
+    "sla_hours": 24,
+    "containment_steps": [
+      "Immediate hard block on primary compromised card C10434-K1",
+      "Identify and freeze all companion cards sharing device profile across graph",
+      "Add device hardware fingerprint and proxy IP ranges to real-time blacklists",
+      "Revoke active web/mobile banking sessions for affected accounts"
+    ],
+    "customer_communication": {
+      "channel": "SMS / In-App Push",
+      "message_copy": "Dear Cardholder, we detected unauthorized activity on your card ending in 4-K1. For your security, we have placed a hold on the card. A fraud specialist will contact you to reissue a new card."
+    },
+    "financial_remediation": [
+      "Process unauthorized transaction chargebacks totaling $1000.03",
+      "Issue provisional credit to affected cardholder(s)",
+      "Waive all associated late fees or overdraft charges"
+    ],
+    "compliance_actions": [
+      "File FinCEN Suspicious Activity Report (SAR) under Rule R9 (Organized Proxy Syndicate)",
+      "Escalate case dossier to Senior Fraud Operations & Legal Compliance (Level 2 Approval)",
+      "Write finalized investigation dossier and syndicate links back to TigerGraph"
+    ],
+    "sign_off_checklist": [
+      "Confirm policy rule alignment (R1, R6, R7, R9, R8)",
+      "Verify financial exposure calculation ($1000.03)",
+      "Validate customer notification dispatch",
+      "Confirm TigerGraph graph resolution payload"
+    ]
+  },
+  "trace_steps_count": 7,
+  "nba_before_additional_evidence": {
+    "status": "decision_at_initial_evidence",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.88,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L2_senior_manager",
+    "evidence_count": 1,
+    "evidence_refs": [
+      "query:check_device_sharing"
+    ],
+    "recommended_actions": [
+      "CREATE_CASE",
+      "BLOCK_CARD",
+      "BLOCK_ALL_LINKED_CARDS",
+      "ESCALATE_TO_L2",
+      "FILE_SAR"
+    ]
+  },
+  "additional_evidence_request": {
+    "required": false,
+    "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+    "action_type": null,
+    "options": []
+  },
+  "after_additional_evidence": {
+    "status": "not_applicable",
+    "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.88,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L2_senior_manager"
+  },
+  "evidence_progression": {
+    "before_additional_evidence": {
+      "status": "decision_at_initial_evidence",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.88,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L2_senior_manager",
+      "evidence_count": 1,
+      "evidence_refs": [
+        "query:check_device_sharing"
+      ],
+      "recommended_actions": [
+        "CREATE_CASE",
+        "BLOCK_CARD",
+        "BLOCK_ALL_LINKED_CARDS",
+        "ESCALATE_TO_L2",
+        "FILE_SAR"
+      ]
+    },
+    "additional_evidence_request": {
+      "required": false,
+      "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+      "action_type": null,
+      "options": []
+    },
+    "after_additional_evidence": {
+      "status": "not_applicable",
+      "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.88,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L2_senior_manager"
+    }
+  },
+  "graph_writeback": {
+    "status": "ready_for_tigergraph_writeback",
+    "case_vertex": "HHG-010",
+    "customer_vertex": "C10434",
+    "card_vertex": "C10434-K1",
+    "transaction_vertices": [
+      "3506725"
+    ],
+    "gsql_artifact": "tigergraph/generated/benchmark_case_writeback.gsql",
+    "note": "This manifest describes the graph writeback payload. A live TigerGraph deployment must execute the generated GSQL; this file does not falsely claim a remote write occurred."
+  }
+}

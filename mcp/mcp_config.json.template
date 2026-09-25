@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "tigergraph-fraud-investigation": {
+      "command": "python",
+      "args": [
+        "d:/HHGOA-Fraud-Agent/mcp/server.py"
+      ],
+      "env": {
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}

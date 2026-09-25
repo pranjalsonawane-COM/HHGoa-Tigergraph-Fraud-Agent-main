@@ -1,0 +1,135 @@
+{
+  "case_id": "HHG-002",
+  "opened_at": "2016-11-22 23:27:07",
+  "trigger_type": "risk_score",
+  "flagged_txn_id": "3478782",
+  "customer_id": "C11891",
+  "card_id": "C11891-K1",
+  "verdict": "confirmed_fraud",
+  "confidence": 0.72,
+  "pattern": "card_not_present_fraud",
+  "pattern_description": "",
+  "affected_txn_ids": [
+    "3478782"
+  ],
+  "first_suspicious_txn_id": "3478782",
+  "exposure_usd": 292.36,
+  "approval_route": "L1_analyst",
+  "next_best_action": "BLOCK_CARD",
+  "recommended_actions": [],
+  "triggered_rules": [
+    "R1",
+    "R7",
+    "R8"
+  ],
+  "sar_required": false,
+  "sar_narrative": "",
+  "evidence": [
+    {
+      "claim": "Online card-not-present transaction of $292.36 under product code C, compared to customer historical average spend of $47.46",
+      "source": "graph",
+      "ref": "query:get_transaction_context",
+      "entity_ids": [
+        "3478782"
+      ]
+    }
+  ],
+  "playbook": {
+    "case_id": "HHG-002",
+    "verdict": "confirmed_fraud",
+    "pattern": "card_not_present_fraud",
+    "primary_action": "BLOCK_CARD",
+    "approval_route": "L1_analyst",
+    "sla_hours": 4,
+    "containment_steps": [
+      "Hard block compromised card C11891-K1",
+      "De-authenticate suspicious online browser sessions",
+      "Order expedited replacement card"
+    ],
+    "customer_communication": {
+      "channel": "SMS / In-App Push",
+      "message_copy": "Dear Customer, we confirmed unauthorized charges of $292.36 on your card. We have blocked the card and initiated a full refund."
+    },
+    "financial_remediation": [
+      "Initiate card network chargebacks totaling $292.36",
+      "Credit customer account in full",
+      "Reissue new card credentials"
+    ],
+    "compliance_actions": [
+      "Record internal fraud resolution in audit log",
+      "Update cardholder risk profile in TigerGraph"
+    ],
+    "sign_off_checklist": [
+      "Confirm policy rule alignment (R1, R7, R8)",
+      "Verify financial exposure calculation ($292.36)",
+      "Validate customer notification dispatch",
+      "Confirm TigerGraph graph resolution payload"
+    ]
+  },
+  "trace_steps_count": 7,
+  "nba_before_additional_evidence": {
+    "status": "decision_at_initial_evidence",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.72,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L1_analyst",
+    "evidence_count": 1,
+    "evidence_refs": [
+      "query:get_transaction_context"
+    ],
+    "recommended_actions": []
+  },
+  "additional_evidence_request": {
+    "required": false,
+    "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+    "action_type": null,
+    "options": []
+  },
+  "after_additional_evidence": {
+    "status": "not_applicable",
+    "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.72,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L1_analyst"
+  },
+  "evidence_progression": {
+    "before_additional_evidence": {
+      "status": "decision_at_initial_evidence",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.72,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L1_analyst",
+      "evidence_count": 1,
+      "evidence_refs": [
+        "query:get_transaction_context"
+      ],
+      "recommended_actions": []
+    },
+    "additional_evidence_request": {
+      "required": false,
+      "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+      "action_type": null,
+      "options": []
+    },
+    "after_additional_evidence": {
+      "status": "not_applicable",
+      "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.72,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L1_analyst"
+    }
+  },
+  "graph_writeback": {
+    "status": "ready_for_tigergraph_writeback",
+    "case_vertex": "HHG-002",
+    "customer_vertex": "C11891",
+    "card_vertex": "C11891-K1",
+    "transaction_vertices": [
+      "3478782"
+    ],
+    "gsql_artifact": "tigergraph/generated/benchmark_case_writeback.gsql",
+    "note": "This manifest describes the graph writeback payload. A live TigerGraph deployment must execute the generated GSQL; this file does not falsely claim a remote write occurred."
+  }
+}

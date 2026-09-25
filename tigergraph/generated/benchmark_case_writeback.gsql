@@ -1,0 +1,102 @@
+-- Generated benchmark case writeback payload for HHGOA 2026
+-- Execute against the configured TigerGraph graph after loading the base graph.
+-- Review/authorize deployment before execution.
+
+-- HHG-001
+INSERT INTO ClosedCase VALUES ("HHG-001", "C12382", "C12382-K1", "2016-12-05 01:55:28", "2016-12-05 01:55:28", "uncertain", "out_of_region_use", 77.07, "No", "VERIFY_WITH_CUSTOMER", "");
+INSERT INTO ON_CARD VALUES ("HHG-001" ClosedCase, "C12382-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-001" ClosedCase, "3514030" Transaction);
+
+-- HHG-002
+INSERT INTO ClosedCase VALUES ("HHG-002", "C11891", "C11891-K1", "2016-11-22 23:27:07", "2016-11-22 23:27:07", "confirmed_fraud", "card_not_present_fraud", 292.36, "No", "", "");
+INSERT INTO ON_CARD VALUES ("HHG-002" ClosedCase, "C11891-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-002" ClosedCase, "3478782" Transaction);
+
+-- HHG-003
+INSERT INTO ClosedCase VALUES ("HHG-003", "C08623", "C08623-K2", "2016-12-10 15:01:21", "2016-12-10 15:01:21", "confirmed_fraud", "out_of_region_use", 49.0, "No", "VERIFY_WITH_CUSTOMER", "");
+INSERT INTO ON_CARD VALUES ("HHG-003" ClosedCase, "C08623-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-003" ClosedCase, "3530164" Transaction);
+
+-- HHG-004
+INSERT INTO ClosedCase VALUES ("HHG-004", "C08106", "C08106-K1", "2016-12-29 07:53:54", "2016-12-29 07:53:54", "confirmed_fraud", "undocumented", 128.33, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-004 Subject Customer: C08106 | Subject Card: C08106-K1 Activity Period: 2016-12-29 07:53:54 | Cumulative Exposure: $128.33 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial ");
+INSERT INTO ON_CARD VALUES ("HHG-004" ClosedCase, "C08106-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-004" ClosedCase, "3583227" Transaction);
+
+-- HHG-005
+INSERT INTO ClosedCase VALUES ("HHG-005", "C02923", "C02923-K1", "2016-12-08 03:38:37", "2016-12-08 03:38:37", "confirmed_fraud", "undocumented", 100.07, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-005 Subject Customer: C02923 | Subject Card: C02923-K1 Activity Period: 2016-12-08 03:38:37 | Cumulative Exposure: $100.07 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial ");
+INSERT INTO ON_CARD VALUES ("HHG-005" ClosedCase, "C02923-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-005" ClosedCase, "3523199" Transaction);
+
+-- HHG-006
+INSERT INTO ClosedCase VALUES ("HHG-006", "C07297", "C07297-K1", "2016-11-22 02:30:00", "2016-11-22 02:30:00", "confirmed_fraud", "undocumented", 482.12, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-006 Subject Customer: C07297 | Subject Card: C07297-K1 Activity Period: 2016-11-22 02:30:00 | Cumulative Exposure: $482.12 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial ");
+INSERT INTO ON_CARD VALUES ("HHG-006" ClosedCase, "C07297-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-006" ClosedCase, "3476682" Transaction);
+
+-- HHG-007
+INSERT INTO ClosedCase VALUES ("HHG-007", "C09933", "C09933-K2", "2016-12-05 03:46:14", "2016-12-05 03:46:14", "cleared", "none", 111.92, "No", "", "");
+INSERT INTO ON_CARD VALUES ("HHG-007" ClosedCase, "C09933-K2" Card);
+
+-- HHG-008
+INSERT INTO ClosedCase VALUES ("HHG-008", "C13171", "C13171-K2", "2016-12-20 03:08:56", "2016-12-20 03:08:56", "confirmed_fraud", "undocumented", 55.68, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-008 Subject Customer: C13171 | Subject Card: C13171-K2 Activity Period: 2016-12-20 03:08:56 | Cumulative Exposure: $55.68 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial i");
+INSERT INTO ON_CARD VALUES ("HHG-008" ClosedCase, "C13171-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-008" ClosedCase, "3558054" Transaction);
+
+-- HHG-009
+INSERT INTO ClosedCase VALUES ("HHG-009", "C08299", "C08299-K1", "2016-12-28 17:10:53", "2016-12-28 17:10:53", "confirmed_fraud", "undocumented", 30.02, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-009 Subject Customer: C08299 | Subject Card: C08299-K1 Activity Period: 2016-12-28 17:10:53 | Cumulative Exposure: $30.02 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial i");
+INSERT INTO ON_CARD VALUES ("HHG-009" ClosedCase, "C08299-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-009" ClosedCase, "3581141" Transaction);
+
+-- HHG-010
+INSERT INTO ClosedCase VALUES ("HHG-010", "C10434", "C10434-K1", "2016-12-02 18:18:27", "2016-12-02 18:18:27", "confirmed_fraud", "undocumented", 1000.03, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-010 Subject Customer: C10434 | Subject Card: C10434-K1 Activity Period: 2016-12-02 18:18:27 | Cumulative Exposure: $1000.03 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial");
+INSERT INTO ON_CARD VALUES ("HHG-010" ClosedCase, "C10434-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-010" ClosedCase, "3506725" Transaction);
+
+-- HHG-011
+INSERT INTO ClosedCase VALUES ("HHG-011", "C11923", "C11923-K2", "2016-12-29 06:27:44", "2016-12-29 06:27:44", "confirmed_fraud", "undocumented", 131.3, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-011 Subject Customer: C11923 | Subject Card: C11923-K2 Activity Period: 2016-12-29 06:27:44 | Cumulative Exposure: $131.30 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial ");
+INSERT INTO ON_CARD VALUES ("HHG-011" ClosedCase, "C11923-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-011" ClosedCase, "3583368" Transaction);
+
+-- HHG-012
+INSERT INTO ClosedCase VALUES ("HHG-012", "C05876", "C05876-K2", "2016-12-18 05:00:31", "2016-12-18 05:00:31", "uncertain", "out_of_region_use", 30.91, "No", "VERIFY_WITH_CUSTOMER", "");
+INSERT INTO ON_CARD VALUES ("HHG-012" ClosedCase, "C05876-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-012" ClosedCase, "3553342" Transaction);
+
+-- HHG-013
+INSERT INTO ClosedCase VALUES ("HHG-013", "C07671", "C07671-K2", "2016-12-09 05:39:29", "2016-12-09 05:39:29", "confirmed_fraud", "undocumented", 35.66, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-013 Subject Customer: C07671 | Subject Card: C07671-K2 Activity Period: 2016-12-09 05:39:29 | Cumulative Exposure: $35.66 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial i");
+INSERT INTO ON_CARD VALUES ("HHG-013" ClosedCase, "C07671-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-013" ClosedCase, "3526826" Transaction);
+
+-- HHG-014
+INSERT INTO ClosedCase VALUES ("HHG-014", "C13487", "C13487-K1", "2016-11-22 20:11:00", "2016-11-22 20:11:00", "confirmed_fraud", "undocumented", 74.96, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-014 Subject Customer: C13487 | Subject Card: C13487-K1 Activity Period: 2016-11-22 20:11:00 | Cumulative Exposure: $74.96 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial i");
+INSERT INTO ON_CARD VALUES ("HHG-014" ClosedCase, "C13487-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-014" ClosedCase, "3478561" Transaction);
+
+-- HHG-015
+INSERT INTO ClosedCase VALUES ("HHG-015", "C03042", "C03042-K1", "2016-11-17 19:03:36", "2016-11-17 19:03:36", "confirmed_fraud", "undocumented", 599.94, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-015 Subject Customer: C03042 | Subject Card: C03042-K1 Activity Period: 2016-11-17 19:03:36 | Cumulative Exposure: $599.94 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial ");
+INSERT INTO ON_CARD VALUES ("HHG-015" ClosedCase, "C03042-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-015" ClosedCase, "3464869" Transaction);
+
+-- HHG-016
+INSERT INTO ClosedCase VALUES ("HHG-016", "C09988", "C09988-K1", "2016-12-12 01:39:08", "2016-12-12 01:39:08", "confirmed_fraud", "undocumented", 59.67, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-016 Subject Customer: C09988 | Subject Card: C09988-K1 Activity Period: 2016-12-12 01:39:08 | Cumulative Exposure: $59.67 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial i");
+INSERT INTO ON_CARD VALUES ("HHG-016" ClosedCase, "C09988-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-016" ClosedCase, "3534820" Transaction);
+
+-- HHG-017
+INSERT INTO ClosedCase VALUES ("HHG-017", "C04570", "C04570-K1", "2016-11-12 00:46:24", "2016-11-12 00:46:24", "confirmed_fraud", "undocumented", 100.09, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-017 Subject Customer: C04570 | Subject Card: C04570-K1 Activity Period: 2016-11-12 00:46:24 | Cumulative Exposure: $100.09 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial ");
+INSERT INTO ON_CARD VALUES ("HHG-017" ClosedCase, "C04570-K1" Card);
+INSERT INTO INVOLVES VALUES ("HHG-017" ClosedCase, "3450629" Transaction);
+
+-- HHG-018
+INSERT INTO ClosedCase VALUES ("HHG-018", "C02354", "C02354-K2", "2016-11-27 14:41:26", "2016-11-27 14:41:26", "confirmed_fraud", "out_of_region_use", 39.08, "No", "VERIFY_WITH_CUSTOMER", "");
+INSERT INTO ON_CARD VALUES ("HHG-018" ClosedCase, "C02354-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-018" ClosedCase, "3491361" Transaction);
+
+-- HHG-019
+INSERT INTO ClosedCase VALUES ("HHG-019", "C07987", "C07987-K2", "2016-12-01 22:28:53", "2016-12-01 22:28:53", "confirmed_fraud", "undocumented", 99.92, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-019 Subject Customer: C07987 | Subject Card: C07987-K2 Activity Period: 2016-12-01 22:28:53 | Cumulative Exposure: $99.92 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial i");
+INSERT INTO ON_CARD VALUES ("HHG-019" ClosedCase, "C07987-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-019" ClosedCase, "3503878" Transaction);
+
+-- HHG-020
+INSERT INTO ClosedCase VALUES ("HHG-020", "C12265", "C12265-K2", "2016-12-03 12:04:26", "2016-12-03 12:04:26", "confirmed_fraud", "undocumented", 125.08, "Yes", "CREATE_CASE|BLOCK_CARD|BLOCK_ALL_LINKED_CARDS|ESCALATE_TO_L2|FILE_SAR", "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE Case Reference: HHG-020 Subject Customer: C12265 | Subject Card: C12265-K2 Activity Period: 2016-12-03 12:04:26 | Cumulative Exposure: $125.08 Primary Typology: UNDOCUMENTED  1. EXECUTIVE SUMMARY: Financial ");
+INSERT INTO ON_CARD VALUES ("HHG-020" ClosedCase, "C12265-K2" Card);
+INSERT INTO INVOLVES VALUES ("HHG-020" ClosedCase, "3509359" Transaction);

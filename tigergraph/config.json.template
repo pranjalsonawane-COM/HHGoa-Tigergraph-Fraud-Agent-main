@@ -1,0 +1,11 @@
+{
+  "host": "http://127.0.0.1",
+  "restpp_port": "9000",
+  "gsql_port": "14240",
+  "graph_name": "FraudGraph",
+  "username": "tigergraph",
+  "password": "tigergraph_password",
+  "secret": "",
+  "token": "",
+  "use_tls": false
+}

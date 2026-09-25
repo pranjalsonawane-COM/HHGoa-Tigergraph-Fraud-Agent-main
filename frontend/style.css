@@ -9,30 +9,30 @@
    ========================================================================== */
 
 :root {
-    --bg-dark: #041d10;
-    --bg-green-deep: #072f1a;
-    --bg-green-mid: #0b4728;
-    --bg-card: rgba(6, 38, 20, 0.88);
-    --bg-card-hover: rgba(9, 53, 29, 0.98);
-    --bg-inner: #03170c;
-    
+    --bg-dark: #dff6ff;
+    --bg-green-deep: #bfe9ff;
+    --bg-green-mid: #7cc8f7;
+    --bg-card: rgba(255, 255, 255, 0.7);
+    --bg-card-hover: rgba(219, 239, 255, 0.9);
+    --bg-inner: #eaf8ff;
+
     --goa-yellow: #ffe600;
     --goa-yellow-glow: rgba(255, 230, 0, 0.25);
-    
+
     --goa-pink: #ff007f;
     --goa-pink-glow: rgba(255, 0, 127, 0.3);
-    
+
     --goa-cyan: #38bdf8;
     --goa-emerald: #10b981;
     --goa-purple: #8b5cf6;
-    
+
     --text-white: #ffffff;
     --text-sand: #eaf2eb;
     --text-muted: #8fbda0;
-    
+
     --border-gold: rgba(255, 230, 0, 0.35);
     --border-subtle: rgba(255, 255, 255, 0.1);
-    
+
     --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     --font-heading: 'Syne', 'Plus Jakarta Sans', sans-serif;
     --font-serif: 'Playfair Display', serif;
@@ -47,7 +47,7 @@
 }
 
 body.hhgoa-theme {
-    background: radial-gradient(circle at 50% 0%, #0d5430 0%, #08381e 50%, #041d10 100%);
+    background: radial-gradient(circle at 50% 0%, #dff7ff 0%, #bfe9ff 45%, #93d5ff 100%);
     background-color: var(--bg-green-deep);
     color: var(--text-white);
     font-family: var(--font-sans);
@@ -126,7 +126,8 @@ body.hhgoa-theme {
     gap: 0.45rem;
 }
 
-.title-hacker, .title-house {
+.title-hacker,
+.title-house {
     font-family: var(--font-heading);
     font-size: 1.35rem;
     font-weight: 800;
@@ -319,9 +320,17 @@ body.hhgoa-theme {
     line-height: 1;
 }
 
-.metric-yellow .metric-number { color: var(--goa-yellow); }
-.metric-pink .metric-number { color: var(--goa-pink); }
-.metric-gold .metric-number { color: #facc15; }
+.metric-yellow .metric-number {
+    color: var(--goa-yellow);
+}
+
+.metric-pink .metric-number {
+    color: var(--goa-pink);
+}
+
+.metric-gold .metric-number {
+    color: #facc15;
+}
 
 .metric-title {
     font-family: var(--font-sans);
@@ -642,11 +651,25 @@ body.hhgoa-theme {
     border-radius: 50%;
 }
 
-.dot-txn { background: var(--goa-yellow); }
-.dot-card { background: var(--goa-emerald); }
-.dot-cust { background: var(--goa-cyan); }
-.dot-dev { background: #f59e0b; }
-.dot-shared { background: var(--goa-pink); }
+.dot-txn {
+    background: var(--goa-yellow);
+}
+
+.dot-card {
+    background: var(--goa-emerald);
+}
+
+.dot-cust {
+    background: var(--goa-cyan);
+}
+
+.dot-dev {
+    background: #f59e0b;
+}
+
+.dot-shared {
+    background: var(--goa-pink);
+}
 
 .canvas-box {
     width: 100%;
@@ -666,7 +689,7 @@ body.hhgoa-theme {
     gap: 0.4rem;
     border-bottom: 1px solid var(--border-gold);
     padding-bottom: 0.35rem;
-    overflow-x: auto;
+    flex-wrap: wrap;
 }
 
 .tab-item {
@@ -680,7 +703,10 @@ body.hhgoa-theme {
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s;
-    white-space: nowrap;
+    flex: 1 1 180px;
+    min-height: 2.5rem;
+    line-height: 1.25;
+    text-align: center;
 }
 
 .tab-item:hover {
@@ -707,8 +733,15 @@ body.hhgoa-theme {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(3px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* EVIDENCE TAB */
@@ -964,6 +997,7 @@ body.hhgoa-theme {
     .metrics-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+
     .dashboard-layout {
         grid-template-columns: 1fr;
     }
@@ -975,10 +1009,12 @@ body.hhgoa-theme {
         gap: 0.75rem;
         padding: 0.75rem 1rem;
     }
+
     .metrics-grid {
         grid-template-columns: 1fr;
         padding: 0.75rem 1rem;
     }
+
     .dashboard-layout {
         padding: 0.75rem 1rem;
     }

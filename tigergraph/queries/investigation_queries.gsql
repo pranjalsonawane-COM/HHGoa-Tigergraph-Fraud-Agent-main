@@ -1,0 +1,432 @@
+// ============================================================================
+// TigerGraph GSQL Investigation Queries for FraudGraph
+// Graph Name: FraudGraph
+// ============================================================================
+
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// QUERY 1: get_customer_profile
+// Purpose: Build a customer-level baseline investigation profile.
+// ----------------------------------------------------------------------------
+CREATE OR REPLACE QUERY get_customer_profile(STRING customer_id) FOR GRAPH FraudGraph {
+    SumAccum<INT> @@total_txns = 0;
+    SumAccum<DOUBLE> @@total_amount = 0.0;
+    MinAccum<DOUBLE> @@min_amount = 99999999.0;
+    MaxAccum<DOUBLE> @@max_amount = 0.0;
+    MinAccum<DATETIME> @@first_seen_ts;
+    MaxAccum<DATETIME> @@last_seen_ts;
+    
+    SetAccum<STRING> @@card_ids;
+    SetAccum<STRING> @@device_ids;
+    SetAccum<STRING> @@billing_regions;
+    SetAccum<STRING> @@purchaser_email_domains;
+    SetAccum<STRING> @@recipient_email_domains;
+    MapAccum<STRING, INT> @@region_counts;
+
+    Start = {Customer.*};
+    TargetCust = SELECT c FROM Start:c WHERE c.customer_id == customer_id;
+
+    Cards = SELECT card FROM TargetCust -(OWNS:e)-> Card:card
+            ACCUM @@card_ids += card.card_id;
+
+    Txns = SELECT t FROM Cards -(MADE:e)-> Transaction:t
+           ACCUM 
+               @@total_txns += 1,
+               @@total_amount += t.amount,
+               @@min_amount += t.amount,
+               @@max_amount += t.amount,
+               @@first_seen_ts += t.ts,
+               @@last_seen_ts += t.ts,
+               IF t.addr1 != "" THEN
+                   @@billing_regions += t.addr1,
+                   @@region_counts += (t.addr1 -> 1)
+               END,
+               IF t.p_email != "" THEN
+                   @@purchaser_email_domains += t.p_email
+               END,
+               IF t.r_email != "" THEN
+                   @@recipient_email_domains += t.r_email
+               END,
+               IF t.device_id != "" THEN
+                   @@device_ids += t.device_id
+               END;
+
+    DOUBLE avg_amount = 0.0;
+    IF @@total_txns > 0 THEN
+        avg_amount = @@total_amount / @@total_txns;
+    ELSE
+        @@min_amount = 0.0;
+    END;
+
+    PRINT customer_id,
+          @@card_ids.size() AS number_of_cards,
+          @@card_ids AS card_ids,
+          @@total_txns AS total_transaction_count,
+          @@total_amount AS total_transaction_amount,
+          avg_amount AS average_transaction_amount,
+          @@min_amount AS min_transaction_amount,
+          @@max_amount AS max_transaction_amount,
+          @@first_seen_ts AS first_transaction_timestamp,
+          @@last_seen_ts AS latest_transaction_timestamp,
+          @@device_ids AS distinct_devices_used,
+          @@billing_regions AS distinct_billing_regions,
+          @@region_counts AS billing_region_counts,
+          @@purchaser_email_domains AS distinct_purchaser_email_domains,
+          @@recipient_email_domains AS distinct_recipient_email_domains;
+}
+
+
+// ----------------------------------------------------------------------------
+// QUERY 2: get_card_window
+// Purpose: Investigate transaction velocity and potential card-testing behavior.
+// ----------------------------------------------------------------------------
+CREATE OR REPLACE QUERY get_card_window(
+    STRING card_id,
+    STRING ref_transaction_id,
+    INT window_hours
+) FOR GRAPH FraudGraph {
+    SumAccum<INT> @@total_txns = 0;
+    SumAccum<DOUBLE> @@total_amount = 0.0;
+    MinAccum<DOUBLE> @@min_amount = 99999999.0;
+    MaxAccum<DOUBLE> @@max_amount = 0.0;
+    
+    // Velocity & Testing accumulators
+    SumAccum<INT> @@small_auth_count = 0; // count of txns < $5.00
+    MinAccum<DATETIME> @@small_auth_earliest_ts;
+    MaxAccum<DATETIME> @@small_auth_latest_ts;
+    
+    MinAccum<DATETIME> @@window_earliest_ts;
+    MaxAccum<DATETIME> @@window_latest_ts;
+
+    ListAccum<VERTEX<Transaction>> @@transactions_list;
+
+    DATETIME target_time;
+    BOOL has_ref_time = false;
+
+    IF ref_transaction_id != "" THEN
+        RefTxn = SELECT t FROM Transaction:t WHERE t.transaction_id == ref_transaction_id;
+        IF RefTxn.size() > 0 THEN
+            SELECT t FROM RefTxn:t ACCUM target_time = t.ts, has_ref_time = true;
+        END;
+    END;
+
+    Start = {Card.*};
+    TargetCard = SELECT c FROM Start:c WHERE c.card_id == card_id;
+
+    Txns = SELECT t FROM TargetCard -(MADE:e)-> Transaction:t
+           WHERE (has_ref_time == false) OR 
+                 (ABS(DATETIME_DIFF(t.ts, target_time)) <= (window_hours * 3600))
+           ACCUM 
+               @@total_txns += 1,
+               @@total_amount += t.amount,
+               @@min_amount += t.amount,
+               @@max_amount += t.amount,
+               @@window_earliest_ts += t.ts,
+               @@window_latest_ts += t.ts,
+               @@transactions_list += t,
+               IF t.amount < 5.0 AND t.channel == "online" THEN
+                   @@small_auth_count += 1,
+                   @@small_auth_earliest_ts += t.ts,
+                   @@small_auth_latest_ts += t.ts
+               END;
+
+    DOUBLE avg_amount = 0.0;
+    INT small_auth_window_sec = 0;
+    INT burst_window_sec = 0;
+
+    IF @@total_txns > 0 THEN
+        avg_amount = @@total_amount / @@total_txns;
+        burst_window_sec = DATETIME_DIFF(@@window_latest_ts, @@window_earliest_ts);
+    ELSE
+        @@min_amount = 0.0;
+    END;
+
+    IF @@small_auth_count > 1 THEN
+        small_auth_window_sec = DATETIME_DIFF(@@small_auth_latest_ts, @@small_auth_earliest_ts);
+    END;
+
+    PRINT card_id,
+          ref_transaction_id,
+          window_hours,
+          @@total_txns AS transaction_count,
+          @@total_amount AS total_amount,
+          avg_amount AS average_amount,
+          @@min_amount AS min_amount,
+          @@max_amount AS max_amount,
+          @@window_earliest_ts AS window_earliest_ts,
+          @@window_latest_ts AS window_latest_ts,
+          burst_window_sec AS burst_window_seconds,
+          @@small_auth_count AS small_auth_count,
+          small_auth_window_sec AS small_auth_window_seconds,
+          @@transactions_list AS transactions;
+}
+
+
+// ----------------------------------------------------------------------------
+// QUERY 3: check_device_sharing
+// Purpose: Discover whether a device/profile is shared across multiple cards & customers.
+// ----------------------------------------------------------------------------
+CREATE OR REPLACE QUERY check_device_sharing(
+    STRING device_id,
+    STRING ref_transaction_id,
+    STRING ref_card_id,
+    INT lookback_days
+) FOR GRAPH FraudGraph {
+    SetAccum<STRING> @@connected_card_ids;
+    SetAccum<STRING> @@connected_customer_ids;
+    SetAccum<STRING> @@transaction_ids;
+    MinAccum<DATETIME> @@first_seen_ts;
+    MaxAccum<DATETIME> @@last_seen_ts;
+    ListAccum<DOUBLE> @@risk_scores;
+    SetAccum<STRING> @@historical_case_ids;
+
+    DATETIME target_time;
+    BOOL has_ref_time = false;
+
+    IF ref_transaction_id != "" THEN
+        RefTxn = SELECT t FROM Transaction:t WHERE t.transaction_id == ref_transaction_id;
+        IF RefTxn.size() > 0 THEN
+            SELECT t FROM RefTxn:t ACCUM target_time = t.ts, has_ref_time = true;
+        END;
+    END;
+
+    Start = {DeviceProfile.*};
+    TargetDev = SELECT d FROM Start:d WHERE d.device_id == device_id;
+
+    Txns = SELECT t FROM TargetDev -(<FROM_DEVICE:e)- Transaction:t
+           WHERE (has_ref_time == false) OR 
+                 (lookback_days <= 0) OR
+                 (t.ts <= target_time AND DATETIME_DIFF(target_time, t.ts) <= (lookback_days * 86400))
+           ACCUM 
+               @@transaction_ids += t.transaction_id,
+               @@connected_card_ids += t.card_id,
+               @@connected_customer_ids += t.customer_id,
+               @@first_seen_ts += t.ts,
+               @@last_seen_ts += t.ts,
+               @@risk_scores += t.risk_score;
+
+    // Retrieve historical cases connected to the cards that used this device
+    DevCards = SELECT c FROM Card:c WHERE c.card_id IN @@connected_card_ids;
+    Cases = SELECT k FROM DevCards -(<ON_CARD:e)- ClosedCase:k
+            ACCUM @@historical_case_ids += k.case_id;
+
+    Cases2 = SELECT k FROM DevCards -(<CONNECTED_TO:e)- ClosedCase:k
+             ACCUM @@historical_case_ids += k.case_id;
+
+    PRINT device_id,
+          TargetDev.canonical_profile_str AS canonical_profile_str,
+          TargetDev.device_type AS device_type,
+          @@connected_card_ids.size() AS number_of_distinct_cards,
+          @@connected_customer_ids.size() AS number_of_distinct_customers,
+          @@connected_card_ids AS connected_card_ids,
+          @@connected_customer_ids AS connected_customer_ids,
+          @@transaction_ids.size() AS transaction_count,
+          @@first_seen_ts AS first_seen,
+          @@last_seen_ts AS last_seen,
+          @@risk_scores AS associated_risk_scores,
+          @@historical_case_ids AS connected_historical_cases;
+}
+
+
+// ----------------------------------------------------------------------------
+// QUERY 4: check_region_discrepancy
+// Purpose: Identify geographical billing-region behavior vs. customer baseline.
+// ----------------------------------------------------------------------------
+CREATE OR REPLACE QUERY check_region_discrepancy(
+    STRING customer_id,
+    STRING ref_transaction_id,
+    STRING ref_card_id
+) FOR GRAPH FraudGraph {
+    STRING current_region = "";
+    DATETIME current_ts;
+    MapAccum<STRING, INT> @@historical_region_counts;
+    MapAccum<STRING, DATETIME> @@region_first_seen;
+    MapAccum<STRING, DATETIME> @@region_last_seen;
+    SetAccum<STRING> @@historical_regions;
+
+    IF ref_transaction_id != "" THEN
+        RefTxn = SELECT t FROM Transaction:t WHERE t.transaction_id == ref_transaction_id;
+        SELECT t FROM RefTxn:t ACCUM current_region = t.addr1, current_ts = t.ts;
+    END;
+
+    Start = {Customer.*};
+    TargetCust = SELECT c FROM Start:c WHERE c.customer_id == customer_id;
+
+    Cards = SELECT card FROM TargetCust -(OWNS:e)-> Card:card;
+
+    Txns = SELECT t FROM Cards -(MADE:e)-> Transaction:t
+           WHERE (ref_transaction_id == "" OR t.transaction_id != ref_transaction_id)
+           ACCUM 
+               IF t.addr1 != "" THEN
+                   @@historical_regions += t.addr1,
+                   @@historical_region_counts += (t.addr1 -> 1),
+                   @@region_first_seen += (t.addr1 -> t.ts),
+                   @@region_last_seen += (t.addr1 -> t.ts)
+               END;
+
+    STRING dominant_region = "";
+    INT max_count = 0;
+    FOREACH (reg, cnt) IN @@historical_region_counts DO
+        IF cnt > max_count THEN
+            max_count = cnt;
+            dominant_region = reg;
+        END;
+    END;
+
+    INT current_region_historical_count = 0;
+    IF current_region != "" AND @@historical_region_counts.containsKey(current_region) THEN
+        current_region_historical_count = @@historical_region_counts.get(current_region);
+    END;
+
+    BOOL region_changed = false;
+    IF current_region != "" AND current_region != dominant_region THEN
+        region_changed = true;
+    END;
+
+    PRINT customer_id,
+          ref_transaction_id,
+          current_region,
+          dominant_region,
+          region_changed,
+          current_region_historical_count AS current_region_transaction_count,
+          max_count AS dominant_region_transaction_count,
+          @@historical_regions AS historical_regions,
+          @@historical_region_counts AS historical_region_counts,
+          @@region_first_seen AS region_first_seen,
+          @@region_last_seen AS region_last_seen;
+}
+
+
+// ----------------------------------------------------------------------------
+// QUERY 5: find_connected_prior_cases
+// Purpose: Retrieve historical fraud investigations connected to investigated entities.
+// ----------------------------------------------------------------------------
+CREATE OR REPLACE QUERY find_connected_prior_cases(
+    STRING customer_id,
+    STRING card_id,
+    STRING device_id,
+    DATETIME before_ts
+) FOR GRAPH FraudGraph {
+    SetAccum<VERTEX<ClosedCase>> @@matched_cases;
+    SetAccum<STRING> @@direct_card_case_ids;
+    SetAccum<STRING> @@customer_cards_case_ids;
+    SetAccum<STRING> @@shared_device_case_ids;
+
+    // 1. Cases on specific card
+    IF card_id != "" THEN
+        TargetCard = SELECT c FROM Card:c WHERE c.card_id == card_id;
+        CardCases = SELECT k FROM TargetCard -(<ON_CARD:e)- ClosedCase:k
+                    WHERE (before_ts == to_datetime("1970-01-01 00:00:00") OR k.closed_at <= before_ts)
+                    ACCUM @@matched_cases += k, @@direct_card_case_ids += k.case_id;
+
+        CardCases2 = SELECT k FROM TargetCard -(<CONNECTED_TO:e)- ClosedCase:k
+                     WHERE (before_ts == to_datetime("1970-01-01 00:00:00") OR k.closed_at <= before_ts)
+                     ACCUM @@matched_cases += k, @@direct_card_case_ids += k.case_id;
+    END;
+
+    // 2. Cases on other cards of the customer
+    IF customer_id != "" THEN
+        TargetCust = SELECT c FROM Customer:c WHERE c.customer_id == customer_id;
+        CustCards = SELECT card FROM TargetCust -(OWNS:e)-> Card:card;
+        CustCases = SELECT k FROM CustCards -(<ON_CARD:e)- ClosedCase:k
+                    WHERE (before_ts == to_datetime("1970-01-01 00:00:00") OR k.closed_at <= before_ts)
+                    ACCUM @@matched_cases += k, @@customer_cards_case_ids += k.case_id;
+
+        CustCases2 = SELECT k FROM CustCards -(<CONNECTED_TO:e)- ClosedCase:k
+                     WHERE (before_ts == to_datetime("1970-01-01 00:00:00") OR k.closed_at <= before_ts)
+                     ACCUM @@matched_cases += k, @@customer_cards_case_ids += k.case_id;
+    END;
+
+    // 3. Cases linked through shared device
+    IF device_id != "" THEN
+        TargetDev = SELECT d FROM DeviceProfile:d WHERE d.device_id == device_id;
+        DevTxns = SELECT t FROM TargetDev -(<FROM_DEVICE:e)- Transaction:t;
+        DevCards = SELECT c FROM DevTxns -(<MADE:e)- Card:c;
+        DevCases = SELECT k FROM DevCards -(<ON_CARD:e)- ClosedCase:k
+                   WHERE (before_ts == to_datetime("1970-01-01 00:00:00") OR k.closed_at <= before_ts)
+                   ACCUM @@matched_cases += k, @@shared_device_case_ids += k.case_id;
+
+        DevCases2 = SELECT k FROM DevCards -(<CONNECTED_TO:e)- ClosedCase:k
+                    WHERE (before_ts == to_datetime("1970-01-01 00:00:00") OR k.closed_at <= before_ts)
+                    ACCUM @@matched_cases += k, @@shared_device_case_ids += k.case_id;
+    END;
+
+    PRINT customer_id,
+          card_id,
+          device_id,
+          @@matched_cases.size() AS total_prior_cases_found,
+          @@direct_card_case_ids AS direct_card_cases,
+          @@customer_cards_case_ids AS customer_cards_cases,
+          @@shared_device_case_ids AS shared_device_cases,
+          @@matched_cases AS prior_cases;
+}
+
+
+// ----------------------------------------------------------------------------
+// QUERY 6: calculate_case_exposure
+// Purpose: Calculate exact monetary exposure for a supplied set of transaction IDs.
+// ----------------------------------------------------------------------------
+CREATE OR REPLACE QUERY calculate_case_exposure(
+    SET<STRING> txn_ids
+) FOR GRAPH FraudGraph {
+    SumAccum<DOUBLE> @@total_exposure = 0.0;
+    SumAccum<INT> @@valid_txn_count = 0;
+    MinAccum<DATETIME> @@earliest_ts;
+    MaxAccum<DATETIME> @@latest_ts;
+    MapAccum<STRING, DOUBLE> @@txn_amounts;
+
+    Txns = SELECT t FROM Transaction:t
+           WHERE t.transaction_id IN txn_ids
+           ACCUM 
+               @@valid_txn_count += 1,
+               @@total_exposure += ABS(t.amount),
+               @@earliest_ts += t.ts,
+               @@latest_ts += t.ts,
+               @@txn_amounts += (t.transaction_id -> t.amount);
+
+    PRINT @@valid_txn_count AS transaction_count,
+          @@total_exposure AS total_exposure_usd,
+          @@txn_amounts AS transaction_amounts,
+          @@earliest_ts AS earliest_transaction,
+          @@latest_ts AS latest_transaction;
+}
+
+
+// ----------------------------------------------------------------------------
+// QUERY 7: get_transaction_context
+// Purpose: Foundational 360-degree context for an alert / flagged transaction.
+// ----------------------------------------------------------------------------
+CREATE OR REPLACE QUERY get_transaction_context(
+    STRING transaction_id
+) FOR GRAPH FraudGraph {
+    ListAccum<VERTEX<Transaction>> @@prev_transactions;
+    ListAccum<VERTEX<Transaction>> @@next_transactions;
+
+    Start = {Transaction.*};
+    TargetTxn = SELECT t FROM Start:t WHERE t.transaction_id == transaction_id;
+
+    // Previous transactions on same card
+    Prev = SELECT prev_t FROM TargetTxn -(PREV:e)-> Transaction:prev_t
+           ACCUM @@prev_transactions += prev_t;
+
+    // Next transactions on same card
+    Next = SELECT next_t FROM TargetTxn -(NEXT:e)-> Transaction:next_t
+           ACCUM @@next_transactions += next_t;
+
+    PRINT TargetTxn AS transaction,
+          TargetTxn.card_id AS card_id,
+          TargetTxn.customer_id AS customer_id,
+          TargetTxn.device_id AS device_id,
+          TargetTxn.addr1 AS billing_region,
+          TargetTxn.addr2 AS billing_country,
+          TargetTxn.p_email AS purchaser_email,
+          TargetTxn.r_email AS recipient_email,
+          TargetTxn.channel AS channel,
+          TargetTxn.product_cd AS product_code,
+          TargetTxn.risk_score AS risk_score,
+          TargetTxn.amount AS amount,
+          TargetTxn.ts AS timestamp,
+          @@prev_transactions AS previous_transactions,
+          @@next_transactions AS next_transactions;
+}

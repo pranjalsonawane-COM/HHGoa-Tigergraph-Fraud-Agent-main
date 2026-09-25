@@ -1,0 +1,25 @@
+# Security & Secrets
+tigergraph/config.json
+*.secret
+*.token
+*.env
+.env.*
+secrets/
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local test artifacts & temporary logs
+*.log
+scratch/
+
+# Raw large dataset files (>100MB exceeds GitHub limit)
+/transactions.csv
+/identity.csv
+/closed_cases_history.csv

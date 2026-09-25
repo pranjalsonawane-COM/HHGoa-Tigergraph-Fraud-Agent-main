@@ -1,0 +1,162 @@
+// ============================================================================
+// TigerGraph GSQL Loading Jobs for FraudGraph
+// Reads preprocessed CSVs from data/processed/
+// ============================================================================
+
+USE GRAPH FraudGraph
+
+// ----------------------------------------------------------------------------
+// 1. DATA LOADING JOB DEFINITION
+// ----------------------------------------------------------------------------
+
+CREATE LOADING JOB load_fraud_graph FOR GRAPH FraudGraph {
+    // Data file declarations
+    DEFINE FILENAME f_cust;
+    DEFINE FILENAME f_cards;
+    DEFINE FILENAME f_txns;
+    DEFINE FILENAME f_devs;
+    DEFINE FILENAME f_regs;
+    DEFINE FILENAME f_emails;
+    DEFINE FILENAME f_hist_cases;
+    
+    DEFINE FILENAME f_e_owns;
+    DEFINE FILENAME f_e_made;
+    DEFINE FILENAME f_e_from_dev;
+    DEFINE FILENAME f_e_billed_in;
+    DEFINE FILENAME f_e_email;
+    DEFINE FILENAME f_e_next;
+    DEFINE FILENAME f_e_case_inv;
+    DEFINE FILENAME f_e_case_card;
+
+    // ------------------------------------------------------------------------
+    // Vertices Loading
+    // ------------------------------------------------------------------------
+    
+    // Customers
+    LOAD f_cust TO VERTEX Customer VALUES(
+        $"customer_id",
+        $"total_cards",
+        $"first_seen",
+        $"home_region",
+        $"total_txns"
+    ) USING HEADER="true", SEPARATOR=",";
+
+    // Cards
+    LOAD f_cards TO VERTEX Card VALUES(
+        $"card_id",
+        $"customer_id",
+        $"card_network",
+        $"card_type",
+        $"card1",
+        $"card2",
+        $"card3",
+        $"card4",
+        $"card5",
+        $"card6",
+        _ // default is_active = true
+    ) USING HEADER="true", SEPARATOR=",";
+
+    // Device Profiles
+    LOAD f_devs TO VERTEX DeviceProfile VALUES(
+        $"device_id",
+        $"canonical_profile_str",
+        $"device_info",
+        $"os",
+        $"browser",
+        $"screen",
+        $"device_type"
+    ) USING HEADER="true", SEPARATOR=",";
+
+    // Billing Regions
+    LOAD f_regs TO VERTEX BillingRegion VALUES(
+        $"region_id",
+        $"total_transactions"
+    ) USING HEADER="true", SEPARATOR=",";
+
+    // Email Domains
+    LOAD f_emails TO VERTEX EmailDomain VALUES(
+        $"domain_name",
+        $"total_transactions"
+    ) USING HEADER="true", SEPARATOR=",";
+
+    // Transactions
+    LOAD f_txns TO VERTEX Transaction VALUES(
+        $"transaction_id",
+        $"amount",
+        $"ts",
+        $"channel",
+        $"product_cd",
+        $"risk_score",
+        $"addr1",
+        $"addr2",
+        $"p_email",
+        $"r_email",
+        $"device_id",
+        $"id_15",
+        $"id_23",
+        _ // default is_flagged = false
+    ) USING HEADER="true", SEPARATOR=",";
+
+    // Historical Cases
+    LOAD f_hist_cases TO VERTEX ClosedCase VALUES(
+        $"case_id",
+        $"customer_id",
+        $"card_id",
+        $"opened_at",
+        $"closed_at",
+        $"outcome",
+        $"pattern",
+        $"exposure_usd",
+        $"report_filed",
+        $"actions_taken",
+        $"analyst_notes",
+        $"txn_ids",
+        $"connected_card_ids"
+    ) USING HEADER="true", SEPARATOR=",";
+
+    // ------------------------------------------------------------------------
+    // Edges Loading
+    // ------------------------------------------------------------------------
+    
+    // OWNS: Customer -> Card
+    LOAD f_e_owns TO EDGE OWNS VALUES($"from_customer", $"to_card")
+        USING HEADER="true", SEPARATOR=",";
+
+    // MADE: Card -> Transaction
+    LOAD f_e_made TO EDGE MADE VALUES($"from_card", $"to_transaction")
+        USING HEADER="true", SEPARATOR=",";
+
+    // FROM_DEVICE: Transaction -> DeviceProfile
+    LOAD f_e_from_dev TO EDGE FROM_DEVICE VALUES($"from_transaction", $"to_device", $"id_15")
+        USING HEADER="true", SEPARATOR=",";
+
+    // BILLED_IN: Transaction -> BillingRegion
+    LOAD f_e_billed_in TO EDGE BILLED_IN VALUES($"from_transaction", $"to_region")
+        USING HEADER="true", SEPARATOR=",";
+
+    // PURCHASER_EMAIL & RECIPIENT_EMAIL
+    LOAD f_e_email TO EDGE PURCHASER_EMAIL VALUES($"from_transaction", $"to_domain")
+        WHERE $"role" == "purchaser"
+        USING HEADER="true", SEPARATOR=",";
+
+    LOAD f_e_email TO EDGE RECIPIENT_EMAIL VALUES($"from_transaction", $"to_domain")
+        WHERE $"role" == "recipient"
+        USING HEADER="true", SEPARATOR=",";
+
+    // NEXT: Transaction -> Transaction
+    LOAD f_e_next TO EDGE NEXT VALUES($"from_transaction", $"to_transaction", $"delta_seconds")
+        USING HEADER="true", SEPARATOR=",";
+
+    // INVOLVES: ClosedCase -> Transaction
+    LOAD f_e_case_inv TO EDGE INVOLVES VALUES($"from_case", $"to_transaction", $"is_first_fraud")
+        USING HEADER="true", SEPARATOR=",";
+
+    // ON_CARD & CONNECTED_TO: ClosedCase -> Card
+    LOAD f_e_case_card TO EDGE ON_CARD VALUES($"from_case", $"to_card")
+        WHERE $"rel_type" == "on_card"
+        USING HEADER="true", SEPARATOR=",";
+
+    LOAD f_e_case_card TO EDGE CONNECTED_TO VALUES($"from_case", $"to_card")
+        WHERE $"rel_type" == "connected_to"
+        USING HEADER="true", SEPARATOR=",";
+}

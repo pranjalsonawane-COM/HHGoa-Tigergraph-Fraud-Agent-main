@@ -1,0 +1,223 @@
+{
+  "case_id": "HHG-014",
+  "opened_at": "2016-11-22 20:11:00",
+  "trigger_type": "analyst_request",
+  "flagged_txn_id": "3478561",
+  "customer_id": "C13487",
+  "card_id": "C13487-K1",
+  "verdict": "confirmed_fraud",
+  "confidence": 0.98,
+  "pattern": "undocumented",
+  "pattern_description": "Multi-card syndicate operating through shared device profile (SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080) across 52 distinct cards and 52 customers, operating behind an anonymous proxy and linked to 116 prior closed fraud cases.",
+  "affected_txn_ids": [
+    "3478561"
+  ],
+  "first_suspicious_txn_id": "3478561",
+  "exposure_usd": 74.96,
+  "approval_route": "L2_senior_manager",
+  "next_best_action": "BLOCK_CARD",
+  "recommended_actions": [
+    "BLOCK_CARD",
+    "REISSUE_CARD",
+    "REIMBURSE_CUSTOMER",
+    "FILE_SAR"
+  ],
+  "triggered_rules": [
+    "R6",
+    "R7",
+    "R9",
+    "R8"
+  ],
+  "sar_required": true,
+  "sar_narrative": "SUSPICIOUS ACTIVITY REPORT (SAR) NARRATIVE\nCase Reference: HHG-014\nSubject Customer: C13487 | Subject Card: C13487-K1\nActivity Period: 2016-11-22 20:11:00 | Cumulative Exposure: $74.96\nPrimary Typology: UNDOCUMENTED\n\n1. EXECUTIVE SUMMARY:\nFinancial institution automated graph surveillance identified organized anomalous activity involving customer C13487 and card C13487-K1, resulting in cumulative suspicious exposure of $74.96 across transaction(s) 3478561.\n\n2. GRAPH & DEVICE TOPOLOGY ANALYSIS:\nGraph traversal revealed that transaction 3478561 originated from device profile 'SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080' (Device ID: DEV_13b0f4b32516). Graph topological queries confirmed this exact device profile is shared across 52 distinct cardholder accounts and is connected to 116 previously confirmed fraud case(s) (CC-3508, CC-3906, CC-0411, CC-3577). Activity exhibited proxy masking characteristics (Proxy status: IP_PROXY:ANONYMOUS).\n\n3. POLICY COMPLIANCE & ACTIONS TAKEN:\nIn accordance with Fraud Policy v1.0 (Rules R6, R8, R9), the institution initiated immediate defensive card blocks, escalated the case to Senior Fraud Management (Level 2 Approval), and filed this formal FinCEN SAR.\n",
+  "evidence": [
+    {
+      "claim": "Device profile (SM-G935F Build/NRD90M | Android 7.0 | chrome 62.0 for android | 1920x1080) is shared across 52 cards and 52 distinct customers, linked to 116 historical fraud cases (CC-3508, CC-3906, CC-0411)",
+      "source": "graph",
+      "ref": "query:check_device_sharing",
+      "entity_ids": [
+        "3478561",
+        "DEV_13b0f4b32516",
+        "CC-3508",
+        "CC-3906",
+        "CC-0411"
+      ]
+    }
+  ],
+  "playbook": {
+    "case_id": "HHG-014",
+    "verdict": "confirmed_fraud",
+    "pattern": "undocumented",
+    "primary_action": "BLOCK_ALL_LINKED_CARDS_AND_FILE_SAR",
+    "approval_route": "L2_senior_manager",
+    "sla_hours": 24,
+    "containment_steps": [
+      "Immediate hard block on primary compromised card C13487-K1",
+      "Identify and freeze all companion cards sharing device profile across graph",
+      "Add device hardware fingerprint and proxy IP ranges to real-time blacklists",
+      "Revoke active web/mobile banking sessions for affected accounts"
+    ],
+    "customer_communication": {
+      "channel": "SMS / In-App Push",
+      "message_copy": "Dear Cardholder, we detected unauthorized activity on your card ending in 7-K1. For your security, we have placed a hold on the card. A fraud specialist will contact you to reissue a new card."
+    },
+    "financial_remediation": [
+      "Process unauthorized transaction chargebacks totaling $74.96",
+      "Issue provisional credit to affected cardholder(s)",
+      "Waive all associated late fees or overdraft charges"
+    ],
+    "compliance_actions": [
+      "File FinCEN Suspicious Activity Report (SAR) under Rule R9 (Organized Proxy Syndicate)",
+      "Escalate case dossier to Senior Fraud Operations & Legal Compliance (Level 2 Approval)",
+      "Write finalized investigation dossier and syndicate links back to TigerGraph"
+    ],
+    "sign_off_checklist": [
+      "Confirm policy rule alignment (R6, R7, R9, R8)",
+      "Verify financial exposure calculation ($74.96)",
+      "Validate customer notification dispatch",
+      "Confirm TigerGraph graph resolution payload"
+    ]
+  },
+  "trace_steps_count": 7,
+  "nba_before_additional_evidence": {
+    "status": "decision_at_initial_evidence",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.88,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L2_senior_manager",
+    "evidence_count": 1,
+    "evidence_refs": [
+      "query:check_device_sharing"
+    ],
+    "recommended_actions": [
+      "CREATE_CASE",
+      "BLOCK_CARD",
+      "BLOCK_ALL_LINKED_CARDS",
+      "ESCALATE_TO_L2",
+      "FILE_SAR"
+    ]
+  },
+  "additional_evidence_request": {
+    "required": false,
+    "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+    "action_type": null,
+    "options": []
+  },
+  "after_additional_evidence": {
+    "status": "not_applicable",
+    "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+    "verdict": "confirmed_fraud",
+    "confidence": 0.88,
+    "next_best_action": "BLOCK_CARD",
+    "approval_route": "L2_senior_manager"
+  },
+  "evidence_progression": {
+    "before_additional_evidence": {
+      "status": "decision_at_initial_evidence",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.88,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L2_senior_manager",
+      "evidence_count": 1,
+      "evidence_refs": [
+        "query:check_device_sharing"
+      ],
+      "recommended_actions": [
+        "CREATE_CASE",
+        "BLOCK_CARD",
+        "BLOCK_ALL_LINKED_CARDS",
+        "ESCALATE_TO_L2",
+        "FILE_SAR"
+      ]
+    },
+    "additional_evidence_request": {
+      "required": false,
+      "reason": "Initial evidence was sufficient for the recorded benchmark decision.",
+      "action_type": null,
+      "options": []
+    },
+    "after_additional_evidence": {
+      "status": "not_applicable",
+      "note": "Initial evidence met the configured action threshold; no additional evidence was required for the submitted benchmark decision.",
+      "verdict": "confirmed_fraud",
+      "confidence": 0.88,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": "L2_senior_manager"
+    }
+  },
+  "graph_writeback": {
+    "status": "ready_for_tigergraph_writeback",
+    "case_vertex": "HHG-014",
+    "customer_vertex": "C13487",
+    "card_vertex": "C13487-K1",
+    "transaction_vertices": [
+      "3478561"
+    ],
+    "gsql_artifact": "tigergraph/generated/benchmark_case_writeback.gsql",
+    "note": "This manifest describes the graph writeback payload. A live TigerGraph deployment must execute the generated GSQL; this file does not falsely claim a remote write occurred."
+  },
+  "trace_steps": [
+    {
+      "step": 1,
+      "phase": "INTERACTIVE_EVIDENCE_GATHERING",
+      "action": "customer_contact",
+      "observation": {
+        "outcome_code": "travel_confirmed",
+        "notes": "Cardholder confirmed vacation travel to Goa / billing region.",
+        "timestamp": "2026-09-24 18:11:24"
+      }
+    },
+    {
+      "step": 2,
+      "phase": "INTERACTIVE_EVIDENCE_GATHERING",
+      "action": "customer_contact",
+      "observation": {
+        "outcome_code": "fraud_confirmed",
+        "notes": "Cardholder confirmed unauthorized charge dispute.",
+        "timestamp": "2026-09-24 18:11:28"
+      }
+    },
+    {
+      "step": 3,
+      "phase": "INTERACTIVE_EVIDENCE_GATHERING",
+      "action": "customer_contact",
+      "observation": {
+        "outcome_code": "travel_confirmed",
+        "notes": "Cardholder confirmed vacation travel to Goa / billing region.",
+        "timestamp": "2026-09-24 18:11:29"
+      }
+    },
+    {
+      "step": 4,
+      "phase": "INTERACTIVE_EVIDENCE_GATHERING",
+      "action": "customer_contact",
+      "observation": {
+        "outcome_code": "travel_confirmed",
+        "notes": "Cardholder confirmed vacation travel to Goa / billing region.",
+        "timestamp": "2026-09-24 18:16:05"
+      }
+    },
+    {
+      "step": 5,
+      "phase": "INTERACTIVE_EVIDENCE_GATHERING",
+      "action": "customer_contact",
+      "observation": {
+        "outcome_code": "travel_confirmed",
+        "notes": "Cardholder confirmed vacation travel to Goa / billing region.",
+        "timestamp": "2026-09-24 18:42:42"
+      }
+    },
+    {
+      "step": 6,
+      "phase": "INTERACTIVE_EVIDENCE_GATHERING",
+      "action": "customer_contact",
+      "observation": {
+        "outcome_code": "fraud_confirmed",
+        "notes": "Cardholder confirmed unauthorized charge dispute.",
+        "timestamp": "2026-09-24 18:42:46"
+      }
+    }
+  ],
+  "is_uncertain": false,
+  "evidence_resolution": "Evidence confirmed unauthorized fraud: fraud_confirmed"
+}
